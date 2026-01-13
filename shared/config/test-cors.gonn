@@ -1,0 +1,108 @@
+package main
+
+import (
+	"fmt"
+	"log"
+	"pubgames/shared/config"
+)
+
+func main() {
+	fmt.Println("🧪 CORS Config System - Smoke Test")
+	fmt.Println("=====================================")
+	fmt.Println()
+
+	// Load config
+	fmt.Println("📖 Loading CORS configuration...")
+	corsConfig, err := config.LoadCORSConfig()
+	if err != nil {
+		log.Fatalf("❌ Failed to load config: %v", err)
+	}
+
+	// Display loaded config
+	fmt.Printf("✅ Config loaded successfully!\n")
+	fmt.Printf("   Environment: %s\n", corsConfig.Environment)
+	fmt.Printf("   Pub ID: %s\n", corsConfig.PubID)
+	fmt.Printf("   Pub Name: %s\n", corsConfig.PubName)
+	fmt.Printf("   CORS Mode: %s\n", corsConfig.CORS.Mode)
+	fmt.Printf("   Updated: %s by %s\n", corsConfig.UpdatedAt.Format("2006-01-02 15:04:05"), corsConfig.UpdatedBy)
+	fmt.Println()
+
+	// Display patterns
+	fmt.Println("📋 Configured patterns:")
+	for i, pattern := range corsConfig.CORS.Patterns {
+		fmt.Printf("   %d. %s\n", i+1, pattern)
+	}
+	if len(corsConfig.CORS.ExplicitOrigins) > 0 {
+		fmt.Println("📋 Explicit origins:")
+		for i, origin := range corsConfig.CORS.ExplicitOrigins {
+			fmt.Printf("   %d. %s\n", i+1, origin)
+		}
+	}
+	fmt.Println()
+
+	// Test various origins
+	fmt.Println("🧪 Testing origin matching:")
+	fmt.Println()
+
+	testCases := []struct {
+		origin   string
+		expected bool
+		reason   string
+	}{
+		// Localhost tests
+		{"http://localhost:3001", true, "Identity service localhost"},
+		{"http://localhost:30010", true, "Frontend on localhost"},
+		{"http://localhost:8080", true, "Any port on localhost"},
+
+		// Local network tests
+		{"http://192.168.1.45:30010", true, "Current Pi IP"},
+		{"http://192.168.1.100:3001", true, "Another device on network"},
+		{"http://192.168.1.1:80", true, "Router IP"},
+
+		// Should fail tests
+		{"http://192.168.2.45:3001", false, "Different subnet"},
+		{"http://10.0.0.45:3001", false, "Different network"},
+		{"https://example.com", false, "External domain"},
+		{"http://evil.com:3001", false, "Malicious domain"},
+	}
+
+	passed := 0
+	failed := 0
+
+	for _, tc := range testCases {
+		result := corsConfig.IsOriginAllowed(tc.origin)
+		status := "❌"
+		if result == tc.expected {
+			status = "✅"
+			passed++
+		} else {
+			failed++
+		}
+
+		expectedStr := "ALLOW"
+		if !tc.expected {
+			expectedStr = "BLOCK"
+		}
+		actualStr := "ALLOW"
+		if !result {
+			actualStr = "BLOCK"
+		}
+
+		fmt.Printf("%s Origin: %-35s | Expected: %-5s | Got: %-5s | %s\n",
+			status, tc.origin, expectedStr, actualStr, tc.reason)
+	}
+
+	fmt.Println()
+	fmt.Println("=====================================")
+	fmt.Printf("📊 Results: %d passed, %d failed\n", passed, failed)
+
+	if failed > 0 {
+		fmt.Println("❌ Some tests failed!")
+		return
+	}
+
+	fmt.Println("✅ All tests passed!")
+	fmt.Println()
+	fmt.Println("🎉 CORS Config System is working correctly!")
+	fmt.Println("   Ready to integrate into apps.")
+}
