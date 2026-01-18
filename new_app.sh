@@ -43,15 +43,92 @@ NC='\033[0m'
 BASE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 TEMPLATE_DIR="$BASE_DIR/template"
 
-echo -e "${BLUE}🎮 PubGames V2 - New App Creator${NC}"
-echo "========================================"
-echo ""
-echo -e "${YELLOW}Input Rules:${NC}"
-echo "  • App name: lowercase, numbers, hyphens only (e.g., 'poker-night')"
-echo "  • Display name: letters, numbers, spaces, basic punctuation"
-echo "  • Avoid: < > \" ' \\ (these break Go syntax)"
-echo "  • Icon: Select from list or enter custom"
-echo ""
+# Command-line arguments
+ARG_APP_NAME=""
+ARG_DISPLAY_NAME=""
+ARG_APP_NUMBER=""
+ARG_DESCRIPTION=""
+ARG_ICON=""
+ARG_SKIP_CONFIRM=false
+ARG_INTERACTIVE=true
+
+# Usage function
+usage() {
+    echo -e "${BLUE}🎮 PubGames V2 - New App Creator${NC}"
+    echo "========================================"
+    echo ""
+    echo "Usage: $0 [options]"
+    echo ""
+    echo "Options:"
+    echo "  -n, --name NAME           App name (required, e.g., 'poker-night')"
+    echo "  -d, --display DISPLAY     App display name (e.g., 'Poker Night')"
+    echo "  -num, --number NUMBER     App number 1-99 (required)"
+    echo "  -desc, --description DESC App description"
+    echo "  -i, --icon ICON          App icon (emoji or text)"
+    echo "  -y, --yes                Skip confirmation prompt"
+    echo "  -h, --help               Show this help"
+    echo ""
+    echo "Interactive mode (no arguments):"
+    echo "  Run without arguments to use interactive prompts"
+    echo ""
+    echo "Example (non-interactive):"
+    echo "  $0 --name poker-night --display 'Poker Night' --number 5 --icon '🃏' --yes"
+    echo ""
+    exit 0
+}
+
+# Parse command-line arguments
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        -n|--name)
+            ARG_APP_NAME="$2"
+            ARG_INTERACTIVE=false
+            shift 2
+            ;;
+        -d|--display)
+            ARG_DISPLAY_NAME="$2"
+            shift 2
+            ;;
+        -num|--number)
+            ARG_APP_NUMBER="$2"
+            ARG_INTERACTIVE=false
+            shift 2
+            ;;
+        -desc|--description)
+            ARG_DESCRIPTION="$2"
+            shift 2
+            ;;
+        -i|--icon)
+            ARG_ICON="$2"
+            shift 2
+            ;;
+        -y|--yes)
+            ARG_SKIP_CONFIRM=true
+            shift
+            ;;
+        -h|--help)
+            usage
+            ;;
+        *)
+            echo -e "${RED}✗ Unknown option: $1${NC}"
+            echo "Use -h or --help for usage information"
+            exit 1
+            ;;
+    esac
+done
+
+# Show header for interactive mode
+if [ "$ARG_INTERACTIVE" = true ]; then
+    echo -e "${BLUE}🎮 PubGames V2 - New App Creator${NC}"
+    echo "========================================"
+    echo ""
+    echo -e "${YELLOW}Input Rules:${NC}"
+    echo "  • App name: lowercase, numbers, hyphens only (e.g., 'poker-night')"
+    echo "  • Display name: letters, numbers, spaces, basic punctuation"
+    echo "  • Avoid: < > \" ' \\ (these break Go syntax)"
+    echo "  • Icon: Select from list or enter custom"
+    echo ""
+fi
 
 # Check if template exists
 if [ ! -d "$TEMPLATE_DIR" ]; then
@@ -59,9 +136,18 @@ if [ ! -d "$TEMPLATE_DIR" ]; then
     exit 1
 fi
 
-# Get app details
-echo ""
-read -p "App name (e.g., 'poker-night'): " APP_NAME
+# Get app details (use arguments or prompt)
+if [ "$ARG_INTERACTIVE" = true ]; then
+    echo ""
+fi
+
+# App Name
+if [ -n "$ARG_APP_NAME" ]; then
+    APP_NAME="$ARG_APP_NAME"
+else
+    read -p "App name (e.g., 'poker-night'): " APP_NAME
+fi
+
 if [ -z "$APP_NAME" ]; then
     echo -e "${RED}✗ App name is required${NC}"
     exit 1
@@ -74,7 +160,13 @@ if ! [[ "$APP_NAME" =~ ^[a-z0-9-]+$ ]]; then
     exit 1
 fi
 
-read -p "App display name (e.g., 'Poker Night'): " APP_DISPLAY_NAME
+# Display Name
+if [ -n "$ARG_DISPLAY_NAME" ]; then
+    APP_DISPLAY_NAME="$ARG_DISPLAY_NAME"
+elif [ "$ARG_INTERACTIVE" = true ]; then
+    read -p "App display name (e.g., 'Poker Night'): " APP_DISPLAY_NAME
+fi
+
 if [ -z "$APP_DISPLAY_NAME" ]; then
     APP_DISPLAY_NAME="$APP_NAME"
 fi
@@ -86,13 +178,25 @@ if [[ "$APP_DISPLAY_NAME" =~ [\<\>\"\'\\] ]]; then
     exit 1
 fi
 
-read -p "App number (1-99, e.g., 3): " APP_NUMBER
+# App Number
+if [ -n "$ARG_APP_NUMBER" ]; then
+    APP_NUMBER="$ARG_APP_NUMBER"
+elif [ "$ARG_INTERACTIVE" = true ]; then
+    read -p "App number (1-99, e.g., 3): " APP_NUMBER
+fi
+
 if [ -z "$APP_NUMBER" ] || ! [[ "$APP_NUMBER" =~ ^[0-9]+$ ]] || [ "$APP_NUMBER" -lt 1 ] || [ "$APP_NUMBER" -gt 99 ]; then
     echo -e "${RED}✗ Invalid app number. Must be a number between 1 and 99${NC}"
     exit 1
 fi
 
-read -p "App description: " APP_DESCRIPTION
+# App Description
+if [ -n "$ARG_DESCRIPTION" ]; then
+    APP_DESCRIPTION="$ARG_DESCRIPTION"
+elif [ "$ARG_INTERACTIVE" = true ]; then
+    read -p "App description: " APP_DESCRIPTION
+fi
+
 if [ -z "$APP_DESCRIPTION" ]; then
     APP_DESCRIPTION="A PubGames application"
 fi
@@ -105,8 +209,10 @@ if [[ "$APP_DESCRIPTION" =~ [\<\>\"\'\\] ]]; then
 fi
 
 # Icon selection with suggestions
-echo ""
-echo -e "${YELLOW}App Icon Selection${NC}"
+if [ -z "$ARG_ICON" ]; then
+    echo ""
+    echo -e "${YELLOW}App Icon Selection${NC}"
+fi
 
 # Define available emojis
 ALL_EMOJIS=(
@@ -172,53 +278,77 @@ show_icon_choices() {
     echo "  7) Enter custom emoji/text"
 }
 
-ICON_START=0
-while true; do
-    show_icon_choices $ICON_START
-    echo ""
-    read -p "Select icon (1-7): " ICON_CHOICE
-    
-    if [[ "$ICON_CHOICE" =~ ^[1-5]$ ]]; then
-        # Valid selection from list
-        ICON_INDEX=$((ICON_START + ICON_CHOICE - 1))
-        if [ $ICON_INDEX -lt ${#AVAILABLE_EMOJIS[@]} ]; then
-            APP_ICON="${AVAILABLE_EMOJIS[$ICON_INDEX]}"
-            echo -e "${GREEN}✓ Selected: $APP_ICON${NC}"
+# Icon selection - use argument or interactive
+if [ -n "$ARG_ICON" ]; then
+    APP_ICON="$ARG_ICON"
+    # Validate custom icon
+    if [[ "$APP_ICON" =~ [\<\>\"\'\\] ]]; then
+        echo -e "${RED}✗ Invalid icon. Cannot contain: < > \" ' \\${NC}"
+        echo "  Use a simple emoji or symbol"
+        exit 1
+    fi
+    ICON_LENGTH=$(echo -n "$APP_ICON" | wc -m)
+    if [ "$ICON_LENGTH" -gt 10 ]; then
+        echo -e "${RED}✗ Icon too long. Use a single emoji or 1-2 character symbol${NC}"
+        exit 1
+    fi
+elif [ "$ARG_INTERACTIVE" = false ]; then
+    # Non-interactive mode with no icon specified - use first available or default
+    if [ ${#AVAILABLE_EMOJIS[@]} -gt 0 ]; then
+        APP_ICON="${AVAILABLE_EMOJIS[0]}"
+    else
+        APP_ICON="🎮"
+    fi
+else
+    # Interactive icon selection
+    ICON_START=0
+    while true; do
+        show_icon_choices $ICON_START
+        echo ""
+        read -p "Select icon (1-7): " ICON_CHOICE
+
+        if [[ "$ICON_CHOICE" =~ ^[1-5]$ ]]; then
+            # Valid selection from list
+            ICON_INDEX=$((ICON_START + ICON_CHOICE - 1))
+            if [ $ICON_INDEX -lt ${#AVAILABLE_EMOJIS[@]} ]; then
+                APP_ICON="${AVAILABLE_EMOJIS[$ICON_INDEX]}"
+                echo -e "${GREEN}✓ Selected: $APP_ICON${NC}"
+                break
+            else
+                echo -e "${RED}✗ Invalid selection${NC}"
+            fi
+        elif [ "$ICON_CHOICE" = "6" ]; then
+            # Show more options
+            ICON_START=$((ICON_START + 5))
+            if [ $ICON_START -ge ${#AVAILABLE_EMOJIS[@]} ]; then
+                ICON_START=0
+                echo -e "${YELLOW}Wrapping back to start...${NC}"
+            fi
+        elif [ "$ICON_CHOICE" = "7" ]; then
+            # Custom entry
+            echo ""
+            read -p "Enter custom icon: " APP_ICON
+            if [ -z "$APP_ICON" ]; then
+                APP_ICON="📝"
+            fi
+            # Validate custom icon
+            if [[ "$APP_ICON" =~ [\<\>\"\'\\] ]]; then
+                echo -e "${RED}✗ Invalid icon. Cannot contain: < > \" ' \\${NC}"
+                echo "  Use a simple emoji or symbol"
+                exit 1
+            fi
+            ICON_LENGTH=$(echo -n "$APP_ICON" | wc -m)
+            if [ "$ICON_LENGTH" -gt 10 ]; then
+                echo -e "${RED}✗ Icon too long. Use a single emoji or 1-2 character symbol${NC}"
+                exit 1
+            fi
+            echo -e "${GREEN}✓ Using: $APP_ICON${NC}"
             break
         else
-            echo -e "${RED}✗ Invalid selection${NC}"
+            echo -e "${RED}✗ Invalid choice. Enter 1-7${NC}"
         fi
-    elif [ "$ICON_CHOICE" = "6" ]; then
-        # Show more options
-        ICON_START=$((ICON_START + 5))
-        if [ $ICON_START -ge ${#AVAILABLE_EMOJIS[@]} ]; then
-            ICON_START=0
-            echo -e "${YELLOW}Wrapping back to start...${NC}"
-        fi
-    elif [ "$ICON_CHOICE" = "7" ]; then
-        # Custom entry
-        echo ""
-        read -p "Enter custom icon: " APP_ICON
-        if [ -z "$APP_ICON" ]; then
-            APP_ICON="📝"
-        fi
-        # Validate custom icon
-        if [[ "$APP_ICON" =~ [\<\>\"\'\\] ]]; then
-            echo -e "${RED}✗ Invalid icon. Cannot contain: < > \" ' \\${NC}"
-            echo "  Use a simple emoji or symbol"
-            exit 1
-        fi
-        ICON_LENGTH=$(echo -n "$APP_ICON" | wc -m)
-        if [ "$ICON_LENGTH" -gt 10 ]; then
-            echo -e "${RED}✗ Icon too long. Use a single emoji or 1-2 character symbol${NC}"
-            exit 1
-        fi
-        echo -e "${GREEN}✓ Using: $APP_ICON${NC}"
-        break
-    else
-        echo -e "${RED}✗ Invalid choice. Enter 1-7${NC}"
-    fi
-done
+    done
+fi
 
 # Calculate ports
 FRONTEND_PORT="300${APP_NUMBER}0"
@@ -235,11 +365,14 @@ echo "  App Number: $APP_NUMBER"
 echo "  Frontend Port: $FRONTEND_PORT"
 echo "  Backend Port: $BACKEND_PORT"
 echo ""
-read -p "Continue? (y/n): " CONFIRM
 
-if [ "$CONFIRM" != "y" ]; then
-    echo "Cancelled"
-    exit 0
+# Confirmation prompt (skip if --yes flag is used)
+if [ "$ARG_SKIP_CONFIRM" = false ]; then
+    read -p "Continue? (y/n): " CONFIRM
+    if [ "$CONFIRM" != "y" ]; then
+        echo "Cancelled"
+        exit 0
+    fi
 fi
 
 APP_DIR="$BASE_DIR/$APP_NAME"
