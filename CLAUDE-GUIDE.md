@@ -2,6 +2,8 @@
 
 **📋 Purpose**: This document provides essential context for AI assistants (Claude, ChatGPT, etc.) working on this project. Read this file at the start of each session to avoid common mistakes and understand the architecture.
 
+**✅ Workflow Tested**: 2026-01-18 - Mac → GitHub → Pi workflow verified and working
+
 ---
 
 ## 🖥️ Development Environment
@@ -63,17 +65,19 @@
 
    **Every change follows this path:**
    1. Claude edits files on Mac
-   2. Claude commits on Mac
-   3. Claude pushes to GitHub
-   4. User (or Claude) SSH to Pi and pulls from GitHub
+   2. Claude commits locally on Mac
+   3. **User decides when to push to GitHub** (allows offline work)
+   4. User pulls on Pi from GitHub
    5. Services run on Pi
    6. If errors, Claude reads Pi logs via MCP
 
    **Commands:**
    ```bash
-   # On Mac (Claude does this automatically)
+   # On Mac - Claude commits locally (automatic)
    git add .
    git commit -m "Description"
+
+   # On Mac - User pushes when ready (manual, or Claude if explicitly asked)
    git push origin master
 
    # On Pi (user does this via SSH)
@@ -84,7 +88,8 @@
 
 5. **Claude Can Execute Commands**:
    - Edit files on Mac
-   - Commit and push from Mac
+   - Commit locally on Mac (automatic after changes)
+   - Push to GitHub (ONLY if user explicitly asks)
    - Read logs from Pi via MCP
    - Cannot run services (Mac has no runtime)
    - **Don't just suggest commands - run them!**
@@ -425,9 +430,11 @@ kill -9 $(lsof -ti:3001)
 
 **On Mac (where Claude works)**:
 ```bash
-# Claude does this automatically
+# Claude does this automatically after making changes
 git add .
 git commit -m "Description of changes"
+
+# User pushes when ready (or tells Claude to push)
 git push origin master
 ```
 
@@ -465,7 +472,8 @@ git pull origin master
 6. **Follow template structure** - Every app matches the pattern
 7. **Test on mobile** - CORS/CSS issues often only appear on mobile
 8. **Read this file first** - At the start of each session to avoid repeated mistakes
-9. **Standard workflow** - Mac → GitHub → Pi (always)
+9. **Commit locally, user pushes** - Commit after changes, but DON'T push unless explicitly asked
+10. **Standard workflow** - Mac (edit + commit) → GitHub (when user pushes) → Pi (user pulls)
 
 ---
 
