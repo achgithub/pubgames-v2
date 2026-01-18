@@ -2,6 +2,8 @@
 
 **📋 Purpose**: This document provides essential context for AI assistants (Claude, ChatGPT, etc.) working on this project. Read this file at the start of each session to avoid common mistakes and understand the architecture.
 
+**✅ Workflow Tested**: 2026-01-18 - Mac → GitHub → Pi workflow verified and working
+
 ---
 
 ## 🖥️ Development Environment
