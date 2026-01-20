@@ -1,4 +1,9 @@
-/* PubGames Shared Styles */
+/* ============================================================================
+   PUBGAMES V2 - SHARED PLATFORM CSS
+   Loaded by all apps via Identity Service
+   See: CSS-SEGREGATION-GUIDE.md for what belongs here
+   ============================================================================ */
+
 
 * {
   box-sizing: border-box;
@@ -15,6 +20,7 @@ body {
 }
 
 /* Layout */
+
 .container {
   max-width: 1200px;
   margin: 0 auto;
@@ -29,6 +35,7 @@ body {
 }
 
 /* Header */
+
 header {
   display: flex;
   justify-content: space-between;
@@ -103,6 +110,7 @@ header h1 {
 }
 
 /* Navigation Tabs */
+
 nav.tabs {
   display: flex;
   background: white;
@@ -135,6 +143,7 @@ nav.tabs button.active {
 }
 
 /* Main Content */
+
 main {
   flex: 1;
   padding: 2rem;
@@ -144,6 +153,7 @@ main {
 }
 
 /* Cards */
+
 .card {
   background: white;
   border-radius: 8px;
@@ -153,6 +163,8 @@ main {
 }
 
 /* Badges */
+
+
 .badge {
   display: inline-block;
   padding: 4px 8px;
@@ -190,18 +202,41 @@ main {
   margin-left: 10px;
 }
 
-.badge-active {
+/* Status Badges - Success States (green) */
+
+.badge-active,
+.badge-correct,
+.badge-completed {
   background: #2ecc71;
   color: white;
 }
 
-.badge-eliminated {
+/* Status Badges - Info/Open States (blue) */
+
+.badge-open,
+.badge-upcoming {
+  background: #3498db;
+  color: white;
+}
+
+/* Status Badges - Neutral/Inactive States (gray) */
+
+.badge-voided,
+.badge-draft {
+  background: #95a5a6;
+  color: white;
+}
+
+/* Status Badges - Error/Eliminated States (red) */
+
+.badge-eliminated,
+.badge-wrong {
   background: #e74c3c;
   color: white;
 }
 
-.badge-voided {
-  background: #95a5a6;
+.badge-closed {
+  background: #34495e;
   color: white;
 }
 
@@ -210,69 +245,45 @@ main {
   color: white;
 }
 
-.badge-correct {
-  background: #2ecc71;
-  color: white;
-}
-
-.badge-wrong {
-  background: #e74c3c;
-  color: white;
-}
-
-.badge-draft {
-  background: #95a5a6;
-  color: white;
-}
-
-.badge-open {
-  background: #3498db;
-  color: white;
-}
-
-.badge-closed {
-  background: #7f8c8d;
-  color: white;
-}
-
-.badge-upcoming {
-  background: #3498db;
-  color: white;
-}
-
-.badge-completed {
-  background: #2ecc71;
-  color: white;
-}
-
 .status-active {
   color: #2ecc71;
-  font-weight: bold;
+  font-weight: 600;
 }
 
 .status-eliminated {
   color: #e74c3c;
-  font-weight: bold;
+  font-weight: 600;
+  text-decoration: line-through;
 }
 
 .status-badge {
-  padding: 4px 10px;
-  border-radius: 4px;
-  font-size: 0.85rem;
+  background: #ecf0f1;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 0.8rem;
   font-weight: 600;
 }
 
 .submitted-badge {
   background: #2ecc71;
   color: white;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  margin-left: 10px;
 }
 
 .pending-badge {
   background: #f39c12;
   color: white;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  margin-left: 10px;
 }
 
 /* Buttons */
+
 .button {
   padding: 10px 20px;
   font-size: 14px;
@@ -457,6 +468,7 @@ main {
 }
 
 /* Forms */
+
 .input {
   width: 100%;
   padding: 10px;
@@ -512,6 +524,7 @@ main {
 }
 
 /* Tables */
+
 .table,
 table {
   width: 100%;
@@ -582,6 +595,7 @@ table tbody tr.current-game-row {
 }
 
 /* Dashboard */
+
 .dashboard h2 {
   margin-top: 0;
   color: #2c3e50;
@@ -625,6 +639,7 @@ table tbody tr.current-game-row {
 }
 
 /* Countdown */
+
 .open-rounds-countdown {
   background: white;
   padding: 20px;
@@ -679,6 +694,7 @@ table tbody tr.current-game-row {
 }
 
 /* Game Selection */
+
 .predict h2,
 .predictions h2,
 .standings h2,
@@ -783,6 +799,7 @@ table tbody tr.current-game-row {
 }
 
 /* Admin */
+
 .admin-dashboard {
   background: white;
   padding: 20px;
@@ -832,6 +849,7 @@ table tbody tr.current-game-row {
 }
 
 /* Summary Stats */
+
 .summary-stats {
   display: flex;
   gap: 20px;
@@ -884,6 +902,7 @@ table tbody tr.current-game-row {
 }
 
 /* Alerts */
+
 .alert {
   padding: 15px;
   margin-bottom: 20px;
@@ -915,6 +934,7 @@ table tbody tr.current-game-row {
 }
 
 /* Typography */
+
 h1, h2, h3, h4, h5, h6 {
   margin-top: 0;
 }
@@ -928,53 +948,12 @@ a:hover {
   text-decoration: underline;
 }
 
-/* Responsive */
-@media (max-width: 768px) {
-  header {
-    flex-direction: column;
-    gap: 15px;
-    text-align: center;
-  }
-
-  header h1 {
-    font-size: 1.4rem;
-  }
-
-  nav.tabs {
-    overflow-x: auto;
-  }
-
-  main {
-    padding: 1rem;
-  }
-
-  .teams {
-    flex-direction: column;
-  }
-
-  .vs {
-    transform: rotate(90deg);
-  }
-
-  .summary-stats {
-    flex-direction: column;
-  }
-
-  .inline-form {
-    flex-direction: column;
-  }
-
-  .inline-form input,
-  .inline-form select {
-    width: 100%;
-  }
-}
-
 /* ============================================================================
    SWEEPSTAKES-SPECIFIC STYLES
    ============================================================================ */
 
 /* Competition Grid & Cards */
+
 .competitions-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -1026,6 +1005,7 @@ a:hover {
 }
 
 /* Competition Actions */
+
 .competition-actions {
   display: flex;
   flex-direction: column;
@@ -1043,6 +1023,7 @@ a:hover {
 }
 
 /* My Entries Display */
+
 .my-entries {
   background: #f8f9fa;
   padding: 15px;
@@ -1094,6 +1075,7 @@ a:hover {
 }
 
 /* Blind Box Selection */
+
 .blind-draw {
   background: white;
   padding: 30px;
@@ -1157,6 +1139,7 @@ a:hover {
 }
 
 /* Selection Lock Warning */
+
 .lock-warning {
   background: #fff3cd;
   border: 2px solid #f39c12;
@@ -1188,6 +1171,7 @@ a:hover {
 }
 
 /* My Draws View */
+
 .my-draws {
   background: white;
   padding: 30px;
@@ -1216,6 +1200,7 @@ a:hover {
 }
 
 /* Seed & Number Badges */
+
 .seed-badge,
 .number-badge {
   display: inline-block;
@@ -1237,6 +1222,7 @@ a:hover {
 }
 
 /* Results Grid */
+
 .results-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -1272,6 +1258,7 @@ a:hover {
 }
 
 /* Competition Select Dropdown */
+
 .competition-select {
   width: 100%;
   max-width: 400px;
@@ -1290,6 +1277,7 @@ a:hover {
 }
 
 /* Admin Entries */
+
 .admin-entries {
   background: white;
   padding: 30px;
@@ -1326,6 +1314,7 @@ a:hover {
 }
 
 /* Spinner Modal */
+
 .spinner-modal {
   position: fixed;
   top: 0;
@@ -1415,6 +1404,7 @@ a:hover {
 }
 
 /* No Entries Message */
+
 .no-entries {
   text-align: center;
   padding: 40px;
@@ -1423,6 +1413,7 @@ a:hover {
 }
 
 /* Admin Results */
+
 .admin-results {
   background: white;
   padding: 30px;
@@ -1430,7 +1421,52 @@ a:hover {
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
-/* Responsive adjustments */
+
+/* ============================================================================
+   RESPONSIVE DESIGN
+   ============================================================================ */
+
+@media (max-width: 768px) {
+  header {
+    flex-direction: column;
+    gap: 15px;
+    text-align: center;
+  }
+
+  header h1 {
+    font-size: 1.4rem;
+  }
+
+  nav.tabs {
+    overflow-x: auto;
+  }
+
+  main {
+    padding: 1rem;
+  }
+
+  .teams {
+    flex-direction: column;
+  }
+
+  .vs {
+    transform: rotate(90deg);
+  }
+
+  .summary-stats {
+    flex-direction: column;
+  }
+
+  .inline-form {
+    flex-direction: column;
+  }
+
+  .inline-form input,
+  .inline-form select {
+    width: 100%;
+  }
+}
+
 @media (max-width: 768px) {
   .competitions-grid {
     grid-template-columns: 1fr;
@@ -1454,3 +1490,4 @@ a:hover {
     height: 250px;
   }
 }
+
