@@ -100,7 +100,7 @@ function App() {
 
   const validateToken = async (token) => {
     try {
-      const response = await fetch(`${IDENTITY_API}/api/validate-token`, {
+      const response = await fetch(`${IDENTITY_API}/validate-token`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       
